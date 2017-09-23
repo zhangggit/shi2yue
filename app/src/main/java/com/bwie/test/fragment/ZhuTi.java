@@ -8,9 +8,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.bwie.test.App;
 import com.bwie.test.R;
 import com.bwie.test.adapter.MyGridViewAdapter;
-import com.bwie.test.bean.UrlUtils;
 import com.bwie.test.bean.ZhuTiBean;
 import com.google.gson.Gson;
 
@@ -21,6 +22,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import okhttp3.Response;
 
 /**
@@ -43,7 +46,10 @@ public class ZhuTi extends Fragment {
     }
 
     private void initData() {
-        UrlUtils.sendOkHttpRequest(urlPath, new Callback() {
+        OkHttpClient okHttpClient = App.send();
+        Request request = new Request.Builder()
+                .url(urlPath).build();
+        okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
 
@@ -64,10 +70,9 @@ public class ZhuTi extends Fragment {
                         recyclerView.setAdapter(adapter);
                     }
                 });
-
-
             }
         });
+
     }
 
     @Override

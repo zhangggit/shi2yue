@@ -1,25 +1,23 @@
 package com.bwie.test;
 
-import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.bwie.test.adapter.Main2RecyclerViewAdapter;
-import com.bwie.test.bean.UrlUtils;
 import com.bwie.test.bean.ZhuTiBean;
 import com.google.gson.Gson;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import okhttp3.Response;
 
 //详情页面
@@ -43,7 +41,11 @@ public class Main2Activity extends AppCompatActivity {
     }
 
     private void initData() {
-        UrlUtils.sendOkHttpRequest("http://news-at.zhihu.com/api/4/themes", new Callback() {
+        OkHttpClient httpClient = App.send();
+        Request request = new Request.Builder()
+                .url("http://news-at.zhihu.com/api/4/themes")
+                .build();
+        httpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
 
@@ -61,7 +63,6 @@ public class Main2Activity extends AppCompatActivity {
                         recyclerView.setAdapter(adapter);
                     }
                 });
-
             }
         });
     }

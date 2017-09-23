@@ -9,13 +9,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.bawei.swiperefreshlayoutlibrary.SwipyRefreshLayout;
 import com.bawei.swiperefreshlayoutlibrary.SwipyRefreshLayoutDirection;
+import com.bwie.test.App;
 import com.bwie.test.GlideImageLoader;
 import com.bwie.test.R;
 import com.bwie.test.adapter.ZuiXinAdapter;
-import com.bwie.test.bean.UrlUtils;
 import com.bwie.test.bean.ZuiXinBean;
 import com.google.gson.Gson;
 import com.youth.banner.Banner;
@@ -28,6 +29,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import okhttp3.Response;
 
 /**
@@ -37,25 +40,25 @@ import okhttp3.Response;
 
 public class ZuiXin extends Fragment {
 
-    String urlPath="http://news-at.zhihu.com/api/4/news/latest";
+    String urlPath = "http://news-at.zhihu.com/api/4/news/latest";
     @BindView(R.id.banner)
     Banner banner;
     @BindView(R.id.recyclerview)
     RecyclerView recyclerView;
     private ZuiXinAdapter adapter;
-    private List<ZuiXinBean.TopStoriesBean> top_stories1=new ArrayList<>();
-    final List<String> list_image=new ArrayList<>();
+    private List<ZuiXinBean.TopStoriesBean> top_stories1 = new ArrayList<>();
+    final List<String> list_image = new ArrayList<>();
 
     private SwipyRefreshLayout srl;
     private Handler handler = null;
-    String url="http://news-at.zhihu.com/api/4/news/before/20131119";
+    String url = "http://news-at.zhihu.com/api/4/news/before/20131119";
 
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.zuixin_fragment,container,false);
-        ButterKnife.bind(this,view);
+        View view = inflater.inflate(R.layout.zuixin_fragment, container, false);
+        ButterKnife.bind(this, view);
         handler = new Handler();
         srl = (SwipyRefreshLayout) view.findViewById(R.id.srl);
 
@@ -63,23 +66,28 @@ public class ZuiXin extends Fragment {
         //设置是否支持刷新和加载更多
         srl.setDirection(SwipyRefreshLayoutDirection.BOTH);
         srl.setOnRefreshListener(new SwipyRefreshLayout.OnRefreshListener() {
+            //下拉刷新
             @Override
             public void onRefresh(int index) {
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-
+                        list_image.clear();
+                        initData();
+                        Toast.makeText(getActivity(), "成功", Toast.LENGTH_SHORT).show();
                         srl.setRefreshing(false);
                     }
                 }, 2000);
             }
 
+            //上啦加载
             @Override
             public void onLoad(int index) {
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                    initData();
+                        Toast.makeText(getActivity(), "成功", Toast.LENGTH_SHORT).show();
+                        initData();
                         srl.setRefreshing(false);
                     }
                 }, 2000);
@@ -95,6 +103,7 @@ public class ZuiXin extends Fragment {
 
         initData();
 
+        //设置适配器
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(linearLayoutManager);
         adapter = new ZuiXinAdapter(getActivity(), top_stories1);
@@ -102,9 +111,14 @@ public class ZuiXin extends Fragment {
 
 
     }
+
     //获取网络数据 图片
     private void initData() {
-        UrlUtils.sendOkHttpRequest(urlPath, new Callback() {
+        OkHttpClient okHttpClient = App.send();
+        Request request = new Request.Builder()
+                .url(urlPath)
+                .build();
+        okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
 
@@ -131,8 +145,8 @@ public class ZuiXin extends Fragment {
                 });
 
 
-
             }
         });
+
     }
 }

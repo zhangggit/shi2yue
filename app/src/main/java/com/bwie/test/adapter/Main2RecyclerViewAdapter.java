@@ -46,9 +46,9 @@ public class Main2RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
 
     @Override
     public int getItemViewType(int position) {
-        if (position%2==0){
+        if (position % 2 == 0) {
             return 0;
-        }else {
+        } else {
             return 1;
         }
     }
@@ -57,6 +57,7 @@ public class Main2RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
     public int getItemCount() {
         return list.size();
     }
+
     //绑定数据
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
@@ -88,6 +89,7 @@ public class Main2RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
             ButterKnife.bind(this, itemView);
         }
     }
+
     //内部类 多条目2
     class ViewHolder2 extends RecyclerView.ViewHolder {
         @BindView(R.id.item2_description)

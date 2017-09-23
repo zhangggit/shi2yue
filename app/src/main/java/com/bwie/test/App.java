@@ -21,7 +21,7 @@ import okhttp3.Response;
 
 public class App extends Application {
 
-    private OkHttpClient okHttpClient;
+    public static OkHttpClient okHttpClient;
 
     @Override
     public void onCreate() {
@@ -54,5 +54,8 @@ public class App extends Application {
             Log.e("TAG", "============response.code() == " + code);
             return response;
         }
+    }
+    public static OkHttpClient send(){
+        return okHttpClient;
     }
 }
